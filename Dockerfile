@@ -1,6 +1,9 @@
 ARG from=ubuntu:22.04
 FROM ${from} as build
 
+ARG BUILDARCH
+ENV BUILDARCH=$BUILDARCH
+
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && apt upgrade -y 
@@ -12,18 +15,18 @@ WORKDIR /
 COPY data/freeradius /etc/freeradius
 
 
-COPY data/pkg /tmp
+COPY data/pkg/$BUILDARCH /tmp
 
 WORKDIR /tmp
 RUN dpkg -i freeradius-common_3.2.3+git_all.deb	
-RUN dpkg -i freeradius-config_3.2.3+git_arm64.deb 
-RUN dpkg -i libfreeradius3_3.2.3+git_arm64.deb 
-RUN dpkg -i freeradius_3.2.3+git_arm64.deb 
-RUN dpkg -i freeradius-utils_3.2.3+git_arm64.deb 
-RUN dpkg -i freeradius-redis_3.2.3+git_arm64.deb 
-RUN dpkg -i freeradius-python3_3.2.3+git_arm64.deb 
+RUN dpkg --force-all -i freeradius-config_3.2.3+git_${BUILDARCH}.deb
+RUN dpkg -i libfreeradius3_3.2.3+git_${BUILDARCH}.deb 
+RUN dpkg -i freeradius_3.2.3+git_${BUILDARCH}.deb 
+RUN dpkg -i freeradius-utils_3.2.3+git_${BUILDARCH}.deb 
+RUN dpkg -i freeradius-redis_3.2.3+git_${BUILDARCH}.deb 
+RUN dpkg -i freeradius-python3_3.2.3+git_${BUILDARCH}.deb 
 
-# RUN chown -R freerad:freerad /etc/freeradius && chmod -R 744 /etc/freeradius
+RUN chown -R freerad:freerad /etc/freeradius && chmod -R 744 /etc/freeradius
 
 
 COPY docker-entrypoint.sh /
