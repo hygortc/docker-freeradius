@@ -15,7 +15,7 @@ WORKDIR /
 COPY data/freeradius /etc/freeradius
 
 
-COPY data/pkg/$BUILDARCH /tmp
+COPY data/pkg/${BUILDARCH} /tmp
 
 WORKDIR /tmp
 RUN dpkg -i freeradius-common_3.2.3+git_all.deb	
